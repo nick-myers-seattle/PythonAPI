@@ -8,7 +8,7 @@ def hello_world():
 @app.route('/v1/medical-supplies')
 def get_medical_supplies():
     return {
-        'medical-supplies': ['wheelchair', 'walker', 'cane', 'crutches']
+        'medical-supplies': ['wheelchairs', 'walkers', 'canes', 'crutches']
     }
 
 @app.route('/v1/wheelchairs')
@@ -26,13 +26,13 @@ def get_walkers():
 @app.route('/v1/canes')
 def get_canes():
     return {
-        'canes': ['standard', 'offset', 'multiple-legged']
+        'canes': ['standard', 'offset', 'multiple-legged', 'chair']
     }
 
 @app.route('/v1/crutches')
 def get_crutches():
     return {
-        'crutches': ['axilla', 'elbow', 'gutterzzz']
+        'crutches': ['axillary', 'elbow', 'gutter', 'forearm']
     }
 
 if __name__ == '__main__':
