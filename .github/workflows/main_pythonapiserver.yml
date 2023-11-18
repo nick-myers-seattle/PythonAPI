@@ -13,6 +13,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      AZUREDBPASSWORD: ${{ secrets.AZUREDBPASSWORD}}
 
     steps:
       - uses: actions/checkout@v4
@@ -48,6 +50,8 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    env:
+      AZUREDBPASSWORD: ${{ secrets.AZUREDBPASSWORD }}
 
     steps:
       - name: Download artifact from build job

@@ -1,4 +1,46 @@
 from flask import Flask
+import psycopg2
+import os
+
+def create_conn():
+    conn = None
+    try:
+        conn = psycopg2.connect(
+            host ="pythonapiserver-server.postgres.database.azure.com",
+            database="pythonapiserver-database",
+            user="rjgjoogces",
+            password=os.getenv("AZUREDBPASSWORD"),
+            sslmode="require"
+        )
+        print("Connection successful")
+    except Exception as e:
+        print("Error:  " + str(e))
+    return conn
+
+connection = create_conn()
+
+
+def create_table(conn):
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS wheelchairs (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100),
+                stock INTEGER,
+            )
+        """)
+        print("Table created successfully")
+
+        conn.commit()
+        cursor.close()
+    except Exception as e:
+        print("Error:  " + str(e))
+
+
+create_table(connection)
+
+
 app = Flask(__name__)
 
 @app.route('/')
