@@ -114,8 +114,12 @@ app = Flask(__name__)
 CORS(app, origins='http://localhost:4201', methods=['GET', 'POST', 'PUT', 'DELETE'], allow_headers='*')
 
 @app.route('/')
-def hello_world():
-    return {'message': 'hi'}
+def root():
+    return {'status': 'ok'}
+
+@app.route('/health')
+def health():
+    return {'status': 'ok'}
 
 @app.route('/v1/medical-supplies')
 def get_medical_supplies():
