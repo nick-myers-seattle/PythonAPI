@@ -10,7 +10,6 @@ def create_conn():
             database="pythonapiserver-database",
             user="rjgjoogces",
             password=os.getenv("AZUREDBPASSWORD"),
-            sslmode="require"
         )
         print("Connection successful")
     except Exception as e:
@@ -27,7 +26,7 @@ def create_table(conn):
             CREATE TABLE IF NOT EXISTS wheelchairs (
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(100),
-                stock INTEGER,
+                stock INTEGER
             )
         """)
         print("Table created successfully")
