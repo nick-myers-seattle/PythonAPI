@@ -11,6 +11,7 @@ def create_conn():
             database="pythonapiserver-database",
             user="rjgjoogces",
             password="spaceNeedle1!",
+
             # host="localhost",
             # database="giraffe",
             # user="postgres",
@@ -24,11 +25,12 @@ def create_conn():
 connection = create_conn()
 
 
-def create_table(conn):
+def create_tables(conn):
     try:
         cursor = conn.cursor()
+
         cursor.execute("""
-            DROP TABLE wheelchairs;
+            DROP TABLE IF EXISTS wheelchairs;
 
             CREATE TABLE IF NOT EXISTS wheelchairs (
                 id SERIAL PRIMARY KEY,
@@ -42,10 +44,62 @@ def create_table(conn):
             ('power', 27),
             ('transport', 46),
             ('reclining', 17);
-
-            SELECT * FROM wheelchairs;
         """)
-        print("Table created successfully")
+        print("Wheelchairs table created successfully")
+
+        cursor.execute("""
+            DROP TABLE IF EXISTS walkers;
+
+            CREATE TABLE IF NOT EXISTS walkers (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100),
+                stock INTEGER
+            );
+
+            INSERT INTO walkers(name, stock)
+            VALUES
+            ('standard', 104),
+            ('rollator', 15),
+            ('folding', 62),
+            ('knee', 48);
+        """)
+        print("Walkers table created successfully")
+
+        cursor.execute("""
+            DROP TABLE IF EXISTS canes;
+
+            CREATE TABLE IF NOT EXISTS canes (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100),
+                stock INTEGER
+            );
+
+            INSERT INTO canes(name, stock)
+            VALUES
+            ('standard', 205),
+            ('offset', 139),
+            ('multiple-legged', 72),
+            ('chair', 23);
+        """)
+        print("Canes table created successfully")
+
+        cursor.execute("""
+            DROP TABLE IF EXISTS crutches;
+
+            CREATE TABLE IF NOT EXISTS crutches (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100),
+                stock INTEGER
+            );
+
+            INSERT INTO crutches(name, stock)
+            VALUES
+            ('axillary', 205),
+            ('elbow', 139),
+            ('gutter', 72),
+            ('forearm', 23);
+        """)
+        print("Crutches table created successfully")
 
         conn.commit()
         cursor.close()
@@ -53,7 +107,7 @@ def create_table(conn):
         print("Error:  " + str(e))
 
 
-create_table(connection)
+create_tables(connection)
 
 
 app = Flask(__name__)
@@ -93,21 +147,66 @@ def get_wheelchairs():
 
 @app.route('/v1/walkers')
 def get_walkers():
-    return {
-        'walkers': ['standard', 'rollator', 'folding', 'knee']
-    }
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM walkers;")
+        wheelchairs = cursor.fetchall()
+
+        connection.commit()
+        cursor.close()
+
+        message = {}
+        for results in wheelchairs:
+            message[results[1]] = results[2]
+
+        print(message)
+
+        return message
+    except Exception as e:
+        print("Error:  " + str(e))
+        return {}
 
 @app.route('/v1/canes')
 def get_canes():
-    return {
-        'canes': ['standard', 'offset', 'multiple-legged', 'chair']
-    }
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM canes;")
+        wheelchairs = cursor.fetchall()
+
+        connection.commit()
+        cursor.close()
+
+        message = {}
+        for results in wheelchairs:
+            message[results[1]] = results[2]
+
+        print(message)
+
+        return message
+    except Exception as e:
+        print("Error:  " + str(e))
+        return {}
 
 @app.route('/v1/crutches')
 def get_crutches():
-    return {
-        'crutches': ['axillary', 'elbow', 'gutter', 'forearm']
-    }
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM crutches;")
+        wheelchairs = cursor.fetchall()
+
+        connection.commit()
+        cursor.close()
+
+        message = {}
+        for results in wheelchairs:
+            message[results[1]] = results[2]
+
+        print(message)
+
+        return message
+    except Exception as e:
+        print("Error:  " + str(e))
+        return {}
 
 if __name__ == '__main__':
     app.run()
