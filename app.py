@@ -9,7 +9,8 @@ def create_conn():
             host ="pythonapiserver-server.postgres.database.azure.com",
             database="pythonapiserver-database",
             user="rjgjoogces",
-            password=os.getenv("AZUREDBPASSWORD"),
+            # password=os.getenv("AZUREDBPASSWORD"),
+            password="spaceNeedle1!",
         )
         print("Connection successful")
     except Exception as e:
