@@ -9,7 +9,6 @@ def create_conn():
             host ="pythonapiserver-server.postgres.database.azure.com",
             database="pythonapiserver-database",
             user="rjgjoogces",
-            # password=os.getenv("AZUREDBPASSWORD"),
             password="spaceNeedle1!",
         )
         print("Connection successful")
@@ -24,11 +23,22 @@ def create_table(conn):
     try:
         cursor = conn.cursor()
         cursor.execute("""
+            DROP TABLE wheelchairs;
+
             CREATE TABLE IF NOT EXISTS wheelchairs (
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(100),
                 stock INTEGER
-            )
+            );
+
+            INSERT INTO wheelchairs(name, stock)
+            VALUES
+            ('manual', 78),
+            ('power', 27),
+            ('transport', 46),
+            ('reclining', 17);
+
+            SELECT * FROM wheelchairs;
         """)
         print("Table created successfully")
 
