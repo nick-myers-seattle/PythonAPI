@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, session
 from flask_cors import CORS, cross_origin
 import psycopg2
 import os
@@ -126,6 +126,9 @@ def get_medical_supplies():
 @cross_origin()
 def get_wheelchairs():
     try:
+        if connection.closed:
+            connection = create_conn()
+
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM wheelchairs;")
         wheelchairs = cursor.fetchall()
@@ -147,6 +150,9 @@ def get_wheelchairs():
 @app.route('/v1/walkers')
 def get_walkers():
     try:
+        if connection.closed:
+            connection = create_conn()
+
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM walkers;")
         wheelchairs = cursor.fetchall()
@@ -168,6 +174,9 @@ def get_walkers():
 @app.route('/v1/canes')
 def get_canes():
     try:
+        if connection.closed:
+            connection = create_conn()
+
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM canes;")
         wheelchairs = cursor.fetchall()
@@ -189,6 +198,9 @@ def get_canes():
 @app.route('/v1/crutches')
 def get_crutches():
     try:
+        if connection.closed:
+            connection = create_conn()
+
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM crutches;")
         wheelchairs = cursor.fetchall()
