@@ -125,6 +125,8 @@ def get_medical_supplies():
 @app.route('/v1/wheelchairs')
 @cross_origin()
 def get_wheelchairs():
+    global connection
+
     try:
         if connection.closed:
             connection = create_conn()
@@ -149,6 +151,8 @@ def get_wheelchairs():
 
 @app.route('/v1/walkers')
 def get_walkers():
+    global connection
+
     try:
         if connection.closed:
             connection = create_conn()
@@ -173,6 +177,8 @@ def get_walkers():
 
 @app.route('/v1/canes')
 def get_canes():
+    global connection
+
     try:
         if connection.closed:
             connection = create_conn()
@@ -197,6 +203,8 @@ def get_canes():
 
 @app.route('/v1/crutches')
 def get_crutches():
+    global connection
+
     try:
         if connection.closed:
             connection = create_conn()
