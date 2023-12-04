@@ -1,16 +1,25 @@
-from flask import Flask, session
+from email.mime.application import MIMEApplication
+import re
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import parseaddr
+from typing import Optional
+import os
+
+from flask import Flask, session, request
+from markupsafe import escape
 from flask_cors import CORS, cross_origin
 import psycopg2
-import os
 
 def create_conn():
     conn = None
     try:
         conn = psycopg2.connect(
-            host ="pythonapiserver-server.postgres.database.azure.com",
-            database="pythonapiserver-database",
-            user="rjgjoogces",
-            password=os.getenv("AZUREDBPASSWORD")
+            host = os.getenv("DB_HOST"),
+            database=os.getenv("DB_DATABASE"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD")
         )
         print("Connection successful")
     except Exception as e:
@@ -226,6 +235,61 @@ def get_crutches():
     except Exception as e:
         print("Error:  " + str(e))
         return {}
+
+@app.route('/v1/send-email', methods=['POST'])
+def send_email():
+    try:
+        password = os.getenv('EMAIL_ADDRESS_AUTOMATED_PASSWORD')
+        from_address = os.getenv("EMAIL_ADDRESS_AUTOMATED")
+        to_address = sanitize_email_address(request.json.get('email'))
+        if to_address is None:
+            raise Exception("Invalid email address")
+
+        message = MIMEMultipart()
+        message['From'] = from_address
+        message['To'] = to_address
+        message['CC'] = os.getenv("EMAIL_ADDRESS_PERSONAL")
+        message['Subject'] = 'Nick\'s Python API Server Email'
+        body = 'Thank you for using my app!  My resume is attached.'
+        message.attach(MIMEText(body, 'plain'))
+
+        try:
+            with open('NickMyersResume.pdf', 'rb') as file:
+                resume = MIMEApplication(file.read(), Name='NickMyersResume.pdf')
+                resume['Content-Disposition'] = 'attachment; filename="NickMyersResume.pdf"'
+                message.attach(resume)
+        except Exception as e:
+            print("Error:  " + str(e))
+
+        email_server = smtplib.SMTP('smtp.gmail.com: 587')
+        email_server.ehlo()
+        email_server.starttls()
+        email_server.login(from_address, password)
+        email_server.sendmail(from_address, to_address, message.as_string())
+        email_server.quit()
+
+        return {
+            'status': 'ok'
+        }
+
+    except Exception as e:
+        print("Error:  " + str(e))
+        return {
+            'status': 'error'
+        }
+    
+def sanitize_email_address(email_address: str) -> Optional[str]:
+    email_address = escape(email_address) # sanitize input
+
+    if not email_address:
+        return None
+    
+    # Regular expression for validating an Email
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    if not re.fullmatch(regex, email_address):
+        return None
+
+    return email_address
 
 if __name__ == '__main__':
     app.run()
