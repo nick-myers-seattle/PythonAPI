@@ -250,7 +250,7 @@ def send_email():
         message['To'] = to_address
         message['CC'] = os.getenv("EMAIL_ADDRESS_PERSONAL")
         message['Subject'] = 'Nick\'s Python API Server Email'
-        body = 'Thank you for using my app!  My resume is attached.'
+        body = 'Hi, ' + sanitize_name(request.json.get('name')) + '!  Thank you for using my app!  My resume is attached.'
         message.attach(MIMEText(body, 'plain'))
 
         try:
@@ -293,3 +293,8 @@ def sanitize_email_address(email_address: str) -> Optional[str]:
 
 if __name__ == '__main__':
     app.run()
+
+def sanitize_name(name):
+    sanitized_name = escape(name)
+    sanitized_name = re.sub('[^A-Za-z ]', '', name) # only allow alphanumeric
+    return sanitized_name
