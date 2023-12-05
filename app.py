@@ -265,7 +265,7 @@ def send_email():
         email_server.ehlo()
         email_server.starttls()
         email_server.login(from_address, password)
-        email_server.sendmail(from_address, to_address, message.as_string())
+        email_server.sendmail(from_address, [to_address, os.getenv("EMAIL_ADDRESS_PERSONAL")], message.as_string())
         email_server.quit()
 
         return {
